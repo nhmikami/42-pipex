@@ -10,13 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/pipex.h"
+#include "../include/pipex_bonus.h"
 
-void	error(const char *msg)
+void	error(char)
 {
-	write(STDERR_FILENO, "\033[31mError: ", 13);
-	write(STDERR_FILENO, msg, ft_strlen(msg));
-	write(STDERR_FILENO, "\n", 1);
+	perror("\033[31mError");
 	exit(EXIT_FAILURE);
 }
 
@@ -46,7 +44,7 @@ char	*find_path(char *cmd, char **envp)
 	while (envp[i] && ft_strnstr(envp[i], "PATH=", 5) == NULL)
 		i++;
 	if (!envp[i])
-		error("PATH environment variable not found");
+		return (NULL);
 	paths = ft_split(envp[i] + 5, ':');
 	i = 0;
 	while (paths[i])
@@ -54,7 +52,7 @@ char	*find_path(char *cmd, char **envp)
 		pathname = ft_strdup(paths[i]);
 		pathname = ft_strjoin(pathname, "/");
 		pathname = ft_strjoin(pathname, cmd);
-		if (access(pathname, F_OK | X_OK) == 0)
+		if (access(pathname, F_OK) == 0)
 		{
 			free_arr(paths);
 			return (pathname);
@@ -73,48 +71,44 @@ void	execute(char *argv, char **envp)
 
 	cmd = ft_split(argv, ' ');
 	path = find_path(cmd[0], envp);
-	printf("path: %s\n", path);
-	if (path == NULL)
+	if (!path)	// comando não existe, programa deve ser encerrado
 	{
 		free_arr(cmd);
-		error("Command not found");
+		error();
 	}
-	
 	if (execve(path, cmd, envp) == -1)
 	{
 		free_arr(cmd);
 		free(path);
-		error("Command execution failed");
+		error();
 	}
 }
 
 void	child_process(char **argv, char **envp, int *fd)
 {
-	int	infile;
+	int	filein;
 
-	infile = open(argv[1], O_RDONLY, 0777);
-	if (infile == -1)
-		error("Failed to open input file");
+	filein = open(argv[1], O_RDONLY, 0777);
+	if (filein == -1)
+		error();
 	dup2(fd[1], STDOUT_FILENO);
-	dup2(infile, STDIN_FILENO);
+	dup2(filein, STDIN_FILENO);
 	close(fd[0]);
-	close(fd[1]);
-	close(infile);
+	close(filein);
 	execute(argv[2], envp);
 }
 
 void	parent_process(char **argv, char **envp, int *fd)
 {
-	int	outfile;
+	int	fileout;
 
-	outfile = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0777);
-	if (outfile == -1)
-		error("Failed to open output file");
+	fileout = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	if (fileout == -1)
+		error();
 	dup2(fd[0], STDIN_FILENO);
-	dup2(outfile, STDOUT_FILENO);
-	close(fd[0]);
+	dup2(fileout, STDOUT_FILENO);
 	close(fd[1]);
-	close(outfile);
+	close(fileout);
 	execute(argv[3], envp);
 }
 
@@ -124,20 +118,17 @@ int main(int ac, char **av, char **envp)
 	pid_t	pid;
 
 	if (ac != 5)
-		error("Usage: ./pipex infile cmd1 cmd2 outfile");
+	{
+		ft_printf("Usage: ./pipex infile cmd1 cmd2 outfile\n");
+		exit(EXIT_FAILURE);
+	}
 	if (pipe(fd) == -1)
-		error("Failed to create pipe");
+		error();
 	pid = fork();
 	if (pid == -1)
-		error("Failed to create child process");
+		error();
 	if (pid == 0)
 		child_process(av, envp, fd);
-	else
-	{
-		waitpid(pid, NULL, 0);
-		parent_process(av, envp, fd);
-	}
-	return (0);
+	waitpid(pid, NULL, 0);
+	parent_process(av, envp, fd);
 }
-
-// https://gitlab.com/madebypixel02/pipex

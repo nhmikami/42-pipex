@@ -12,6 +12,7 @@ SRCS		=	ft_atoi.c \
 			ft_strjoin.c \
 			ft_strlen.c \
 			ft_strncmp.c \
+			ft_strnstr.c \
 			ft_printf.c \
 			ft_printf_utils.c \
 			get_next_line.c
