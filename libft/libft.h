@@ -18,13 +18,16 @@
 # include <unistd.h>
 
 // libft
-int		ft_atoi(const char *nptr);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 char	*ft_strchr(const char *s, int c);
 char	*ft_strdup(const char *s);
 char	*ft_strjoin(char *s1, char *s2);
 char	*ft_strnstr(const char *big, const char *little, size_t len);
 char	**ft_split(char const *s, char c);
+void	ft_free_arr(char **arr);
+void	ft_putchar_fd(char c, int fd);
+void	ft_putendl_fd(char *s, int fd);
+void	ft_putstr_fd(char *s, int fd);
 void	*ft_memmove(void *dest, const void *src, size_t n);
 size_t	ft_strlen(const char *s);
 

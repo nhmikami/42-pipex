@@ -4,8 +4,11 @@ RM			=	rm -f
 CC			=	gcc
 CFLAGS		=	-Wall -Wextra -Werror
 
-SRCS		=	ft_atoi.c \
-			ft_memmove.c \
+SRCS		=	ft_memmove.c \
+			ft_free_arr.c \
+			ft_putchar_fd.c \
+			ft_putendl_fd.c \
+			ft_putstr_fd.c \
 			ft_split.c \
 			ft_strchr.c \
 			ft_strdup.c \

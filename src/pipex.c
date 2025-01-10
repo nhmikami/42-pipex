@@ -6,26 +6,18 @@
 /*   By: naharumi <naharumi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 19:05:01 by naharumi          #+#    #+#             */
-/*   Updated: 2025/01/07 19:05:02 by naharumi         ###   ########.fr       */
+/*   Updated: 2025/01/09 20:57:24 by naharumi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex.h"
-
-void	error(const char *msg)
-{
-	write(STDERR_FILENO, "\033[31mError: ", 13);
-	write(STDERR_FILENO, msg, ft_strlen(msg));
-	write(STDERR_FILENO, "\n", 1);
-	exit(EXIT_FAILURE);
-}
 
 void	free_arr(char **arr)
 {
 	int	i;
 
 	if (!arr)
-		return;
+		return ;
 	i = 0;
 	while (arr[i])
 	{
@@ -36,18 +28,38 @@ void	free_arr(char **arr)
 	return ;
 }
 
-char	*find_path(char *cmd, char **envp)
+void	exit_error(char *msg, char *param, char **arr)
+{
+	ft_putstr_fd("\033[31mError:\033[0m ", 2);
+	ft_putstr_fd(msg, 2);
+	if (param)
+		ft_putstr_fd(param, 2);
+	write(STDERR_FILENO, "\n", 1);
+	free_arr(arr);
+	exit(EXIT_FAILURE);
+}
+
+char	**get_paths(char **envp)
 {
 	char	**paths;
-	char	*pathname;
 	int		i;
 
 	i = 0;
 	while (envp[i] && ft_strnstr(envp[i], "PATH=", 5) == NULL)
 		i++;
 	if (!envp[i])
-		error("PATH environment variable not found");
+		exit_error("PATH environment variable not found", NULL, NULL);
 	paths = ft_split(envp[i] + 5, ':');
+	return (paths);
+}
+
+char	*find_path(char *cmd, char **envp)
+{
+	char	**paths;
+	char	*pathname;
+	int		i;
+
+	paths = get_paths(envp);
 	i = 0;
 	while (paths[i])
 	{
@@ -73,18 +85,15 @@ void	execute(char *argv, char **envp)
 
 	cmd = ft_split(argv, ' ');
 	path = find_path(cmd[0], envp);
-	printf("path: %s\n", path);
 	if (path == NULL)
 	{
-		free_arr(cmd);
-		error("Command not found");
+		exit_error("Command not found: ", cmd[0], cmd);
 	}
-	
 	if (execve(path, cmd, envp) == -1)
 	{
 		free_arr(cmd);
 		free(path);
-		error("Command execution failed");
+		exit_error("Command execution failed: ", cmd[0], cmd);
 	}
 }
 
@@ -94,9 +103,9 @@ void	child_process(char **argv, char **envp, int *fd)
 
 	infile = open(argv[1], O_RDONLY, 0777);
 	if (infile == -1)
-		error("Failed to open input file");
-	dup2(fd[1], STDOUT_FILENO);
-	dup2(infile, STDIN_FILENO);
+		exit_error("Failed to open input file: ", argv[1], NULL);
+	if (dup2(fd[1], STDOUT_FILENO) == -1 || dup2(infile, STDIN_FILENO) == -1)
+		exit_error("dup2 failed", NULL, NULL);
 	close(fd[0]);
 	close(fd[1]);
 	close(infile);
@@ -109,35 +118,38 @@ void	parent_process(char **argv, char **envp, int *fd)
 
 	outfile = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	if (outfile == -1)
-		error("Failed to open output file");
-	dup2(fd[0], STDIN_FILENO);
-	dup2(outfile, STDOUT_FILENO);
+		exit_error("Failed to open output file: ", argv[4], NULL);
+	if (dup2(fd[0], STDIN_FILENO) == -1 || dup2(outfile, STDOUT_FILENO) == -1)
+		exit_error("dup2 failed", NULL, NULL);
 	close(fd[0]);
 	close(fd[1]);
 	close(outfile);
 	execute(argv[3], envp);
 }
 
-int main(int ac, char **av, char **envp)
+int	main(int ac, char **av, char **envp)
 {
 	int		fd[2];
 	pid_t	pid;
+	int		status;
 
 	if (ac != 5)
-		error("Usage: ./pipex infile cmd1 cmd2 outfile");
+		exit_error("Usage: ./pipex infile cmd1 cmd2 outfile", NULL, NULL);
 	if (pipe(fd) == -1)
-		error("Failed to create pipe");
+		exit_error("Failed to create pipe", NULL, NULL);
 	pid = fork();
 	if (pid == -1)
-		error("Failed to create child process");
+		exit_error("Failed to fork process", NULL, NULL);
 	if (pid == 0)
 		child_process(av, envp, fd);
 	else
 	{
-		waitpid(pid, NULL, 0);
+		waitpid(pid, &status, 0);
+		if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
+			exit(EXIT_FAILURE);
 		parent_process(av, envp, fd);
 	}
-	return (0);
 }
 
-// https://gitlab.com/madebypixel02/pipex
+// valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes ./pipex infile "invalidcmd" "wc -l" outfile
+// valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --trace-children=yes
