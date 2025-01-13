@@ -1,5 +1,5 @@
 NAME			=	pipex
-BONUS_NAME		=	checker
+BONUS_NAME		=	pipex_bonus
 RM				=	rm -f
 CC				=	cc
 CFLAGS			=	-Wall -Wextra -Werror
@@ -9,9 +9,9 @@ BONUS_PATH		=	./src_bonus
 INC_PATH		=	./include
 LIB_PATH		=	./libft
 
-SRC				=	pipex.c
+SRC				=	pipex.c pipex_utils.c
 
-BONUS_SRC		=	pipex_bonus.c
+BONUS_SRC		=	pipex_bonus.c execute_bonus.c pipex_utils_bonus.c
 
 OBJ				=	$(addprefix $(SRC_PATH)/, $(SRC:.c=.o))
 BONUS_OBJ		=	$(addprefix $(BONUS_PATH)/, $(BONUS_SRC:.c=.o))
@@ -49,4 +49,10 @@ fclean:				clean
 
 re:					fclean all
 
-.PHONY:		all bonus clean fclean re
+rebonus:			fclean bonus
+
+leak:
+	@echo "Arguments: IN, CMD1, CMD2 and OUT"
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --trace-children=yes ./$(NAME) $(IN) $(CMD1) $(CMD2) $(OUT)
+
+.PHONY:		all bonus clean fclean re rebonus

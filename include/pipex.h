@@ -13,6 +13,8 @@
 #ifndef PIPEX_H
 # define PIPEX_H
 
+# define FILE_MAX 1024
+
 # include <fcntl.h> //open
 # include <stdio.h> //perror
 # include <stdlib.h> //malloc, exit
@@ -21,6 +23,7 @@
 # include <unistd.h> //pipe, dup, access, execve, fork
 # include "../libft/libft.h"
 
-
+char	*find_path(char *cmd, char **envp);
+void	exit_error(char *msg, char *param, char **arr);
 
 #endif

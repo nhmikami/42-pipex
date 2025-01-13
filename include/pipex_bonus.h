@@ -13,6 +13,8 @@
 #ifndef PIPEX_BONUS_H
 # define PIPEX_BONUS_H
 
+# define FILE_MAX 1024
+
 # include <fcntl.h> //open
 # include <stdio.h> //perror
 # include <stdlib.h> //malloc, exit
@@ -21,34 +23,10 @@
 # include <unistd.h> //pipe, dup, access, execve, fork
 # include "../libft/libft.h"
 
-enum e_pipex_error
-{
-	END = 1,
-	CMD_NOT_FOUND = 0,
-	NO_FILE = -1,
-	NO_PERM = -2,
-	INV_ARGS = -3,
-	NO_MEMORY = -4,
-	PIPE_ERR = -5,
-	DUP_ERR = -6,
-	FORK_ERR = -7,
-	NO_PATH = -8,
-	CMD_FAIL = -9
-};
-
-typedef struct s_pipex
-{
-	int		infile;
-	int		outfile;
-	int		**pipe;
-	int		pipe_count;
-	char	**cmds;
-	int		cmd_count;
-	char	**paths;
-	char	*pathname;
-	pid_t	pid;
-	int		status;
-	int		error_log;
-}   t_pipex;
+int		open_file(char *av, int mode);
+void	exit_error(char *msg, char *param, char **arr);
+void	setup_io(int ac, char **av, int *infile, int *outfile);
+void	execute(char *av, char **envp);
+void	here_doc(char **av, int *outfile);
 
 #endif

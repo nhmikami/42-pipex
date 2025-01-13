@@ -66,11 +66,14 @@ static char	*update_line_backup(char *line, char **backup)
 		return (free_and_return(&line, backup));
 	ft_memmove(new_line, line, line_len);
 	new_line[line_len] = '\0';
-	*backup = ft_strdup(&line[line_len]);
-	if (!*backup)
+	if (ft_strlen(&line[line_len]) > 0)
 	{
-		free(new_line);
-		return (free_and_return(&line, backup));
+		*backup = ft_strdup(&line[line_len]);
+		if (!*backup)
+		{
+			free(new_line);
+			return (free_and_return(&line, backup));
+		}
 	}
 	free(line);
 	return (new_line);

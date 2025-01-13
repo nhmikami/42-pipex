@@ -12,7 +12,7 @@
 
 #include "libft.h"
 
-static void	*free_arr(char **arr, int i)
+void	*free_arr(char **arr, int i)
 {
 	int	index;
 
