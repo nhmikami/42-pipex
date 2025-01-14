@@ -5,14 +5,14 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: naharumi <naharumi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/07 19:05:01 by naharumi          #+#    #+#             */
-/*   Updated: 2025/01/09 18:14:03 by naharumi         ###   ########.fr       */
+/*   Created: 2025/01/14 14:28:10 by naharumi          #+#    #+#             */
+/*   Updated: 2025/01/14 14:28:10 by naharumi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex_bonus.h"
 
-void	process_parent(int *fd, pid_t pid, int *outfile)
+static void	process_parent(int *fd, pid_t pid, int *outfile)
 {
 	int	status;
 
@@ -27,7 +27,7 @@ void	process_parent(int *fd, pid_t pid, int *outfile)
 	}
 }
 
-void	process_child(char *cmd, char **envp, int *outfile)
+static void	process_child(char *cmd, char **envp, int *outfile)
 {
 	pid_t	pid;
 	int		fd[2];
@@ -49,7 +49,7 @@ void	process_child(char *cmd, char **envp, int *outfile)
 		process_parent(fd, pid, outfile);
 }
 
-void	here_doc_input(char *limiter, int *fd)
+static void	here_doc_input(char *limiter, int *fd)
 {
 	char	*line;
 

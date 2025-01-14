@@ -5,24 +5,12 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: naharumi <naharumi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/07 19:05:01 by naharumi          #+#    #+#             */
-/*   Updated: 2025/01/09 20:57:24 by naharumi         ###   ########.fr       */
+/*   Created: 2025/01/14 14:28:18 by naharumi          #+#    #+#             */
+/*   Updated: 2025/01/14 14:28:18 by naharumi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex_bonus.h"
-
-/*void	close_fds(void)
-{
-	int	fd;
-
-	fd = 3;
-	while (fd < FILE_MAX)
-	{
-		close(fd);
-		fd++;
-	}
-}*/
 
 void	exit_error(char *msg, char *param, char **arr)
 {

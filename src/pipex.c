@@ -12,27 +12,19 @@
 
 #include "../include/pipex.h"
 
-void	execute(char *av, char **envp)
+void	exit_error(char *msg, char *param, char **arr)
 {
-	char	**cmd;
-	char	*path;
-
-	cmd = ft_split_args(av, ' ');
-	path = find_path(cmd[0], envp);
-	if (path == NULL)
-	{
-		exit_error("Command not found: ", cmd[0], cmd);
-	}
-	if (execve(path, cmd, envp) == -1)
-	{
-		free(path);
-		exit_error("Command execution failed: ", cmd[0], cmd);
-	}
-	free(path);
-	ft_free_arr(cmd);
+	ft_putstr_fd("\033[31mError:\033[0m ", 2);
+	ft_putstr_fd(msg, 2);
+	if (param)
+		ft_putstr_fd(param, 2);
+	write(STDERR_FILENO, "\n", 1);
+	if (arr)
+		ft_free_arr(arr);
+	exit(EXIT_FAILURE);
 }
 
-void	process_child(char **av, char **envp, int *fd)
+static void	process_child(char **av, char **envp, int *fd)
 {
 	int	infile;
 
@@ -54,7 +46,7 @@ void	process_child(char **av, char **envp, int *fd)
 	execute(av[2], envp);
 }
 
-void	process_parent(char **av, char **envp, int *fd)
+static void	process_parent(char **av, char **envp, int *fd)
 {
 	int	outfile;
 

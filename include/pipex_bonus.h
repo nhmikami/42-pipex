@@ -13,20 +13,17 @@
 #ifndef PIPEX_BONUS_H
 # define PIPEX_BONUS_H
 
-# define FILE_MAX 1024
-
-# include <fcntl.h> //open
-# include <stdio.h> //perror
-# include <stdlib.h> //malloc, exit
-# include <sys/types.h> //pid_t
-# include <sys/wait.h> //wait
-# include <unistd.h> //pipe, dup, access, execve, fork
+# include <fcntl.h>
+# include <stdlib.h>
+# include <sys/types.h>
+# include <sys/wait.h>
+# include <unistd.h>
 # include "../libft/libft.h"
 
-int		open_file(char *av, int mode);
-void	exit_error(char *msg, char *param, char **arr);
-void	setup_io(int ac, char **av, int *infile, int *outfile);
 void	execute(char *av, char **envp);
 void	here_doc(char **av, int *outfile);
+void	setup_io(int ac, char **av, int *infile, int *outfile);
+void	exit_error(char *msg, char *param, char **arr);
+int		open_file(char *av, int mode);
 
 #endif

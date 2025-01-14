@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex_utils_bonus.c                                :+:      :+:    :+:   */
+/*   execute_bonus.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: naharumi <naharumi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/07 19:05:01 by naharumi          #+#    #+#             */
-/*   Updated: 2025/01/09 20:57:24 by naharumi         ###   ########.fr       */
+/*   Created: 2025/01/14 14:27:37 by naharumi          #+#    #+#             */
+/*   Updated: 2025/01/14 14:27:37 by naharumi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ static char	*find_path(char *cmd, char **envp)
 	char	*pathname;
 	int		i;
 
+	if (access(cmd, F_OK | X_OK) == 0)
+		return (cmd);
 	paths = get_paths(envp);
 	i = 0;
 	while (paths[i])
@@ -59,9 +61,7 @@ void	execute(char *av, char **envp)
 	cmd = ft_split_args(av, ' ');
 	path = find_path(cmd[0], envp);
 	if (path == NULL)
-	{
 		exit_error("Command not found: ", cmd[0], cmd);
-	}
 	if (execve(path, cmd, envp) == -1)
 	{
 		free(path);

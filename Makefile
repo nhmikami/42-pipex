@@ -9,7 +9,7 @@ BONUS_PATH		=	./src_bonus
 INC_PATH		=	./include
 LIB_PATH		=	./libft
 
-SRC				=	pipex.c pipex_utils.c
+SRC				=	pipex.c execute.c
 
 BONUS_SRC		=	pipex_bonus.c execute_bonus.c pipex_utils_bonus.c
 
@@ -50,9 +50,5 @@ fclean:				clean
 re:					fclean all
 
 rebonus:			fclean bonus
-
-leak:
-	@echo "Arguments: IN, CMD1, CMD2 and OUT"
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --trace-children=yes ./$(NAME) $(IN) $(CMD1) $(CMD2) $(OUT)
 
 .PHONY:		all bonus clean fclean re rebonus
