@@ -19,27 +19,27 @@ Run the program:
 ```
 
 ## Bonus
-For the bonus part, the program must **handle multiple pipes**
-```sh
-< infile cmd1 | cmd2 | ... | cmdN > outfile
-```
+For the bonus part, the program should also:
+* Handle multiple pipes
+  ```sh
+  < infile cmd1 | cmd2 | ... | cmdN > outfile
+  ```
 
-Run the program:
-```sh
-./pipex infile cmd1 cmd2 ... [cmdN] outfile
-```
-<br />
+  Run the program:
+  ```sh
+  ./pipex infile cmd1 cmd2 ... [cmdN] outfile
+  ```
 
 
-The program should also **support « and »**
-```sh
-cmd1 << LIMITER | cmd2 | ... | cmdN >> outfile
-```
+* Support « and »
+  ```sh
+  cmd1 << LIMITER | cmd2 | ... | cmdN >> outfile
+  ```
   * `<< LIMITER` allows the user to provide input directly in the command line or script, terminating when the word `LIMITER` is encountered
   * `>> outfile` redirects the standard output (`stdout`) of `cmdN` to `outfile`, appending the output to the file instead of overwriting it
 
 
-Run the program:
-```sh
-./pipex here_doc LIMITER cmd1 cmd2 ... [cmdN] outfile
-```
+   Run the program:
+   ```sh
+   ./pipex here_doc LIMITER cmd1 cmd2 ... [cmdN] outfile
+   ```
