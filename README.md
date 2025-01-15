@@ -19,7 +19,7 @@ Run the program:
 ```
 
 ## Bonus
-**Handle multiple pipes**
+For the bonus part, the program must **handle multiple pipes**
 ```sh
 < infile cmd1 | cmd2 | ... | cmdN > outfile
 ```
@@ -28,8 +28,10 @@ Run the program:
 ```sh
 ./pipex infile cmd1 cmd2 ... [cmdN] outfile
 ```
+<br />
 
-**Support « and » when the first parameter is "here_doc"**
+
+The program should also **support « and »**
 ```sh
 cmd1 << LIMITER | cmd2 | ... | cmdN >> outfile
 ```
@@ -41,6 +43,3 @@ Run the program:
 ```sh
 ./pipex here_doc LIMITER cmd1 cmd2 ... [cmdN] outfile
 ```
-
-// valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes ./pipex infile "invalidcmd" "wc -l" outfile
-// valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --trace-children=yes --track-fds=yes 
